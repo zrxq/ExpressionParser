@@ -8,26 +8,71 @@
 import Foundation
 
 extension ExpressionParser {
-    enum TokenizerError: Error {
-        case invalidCharacter(character: Character, index: String.Index)
-        case invalidDecimal(decialString: String, index: String.Index)
+    public struct EvaluationError: Error, CustomStringConvertible {
+        public let error: ErrorType
+        public let location: Int
+        public let index: String.Index
+
+        public var description: String {
+            switch error {
+            case .tokenizer(let error):
+                return error.description
+            case .parser(let error):
+                return error.description
+            }
+        }
+    }
+
+    public enum ErrorType {
+        case tokenizer(TokenizerError)
+        case parser(ParserError)
     }
 }
 
 extension ExpressionParser {
-    struct ParserError: Error {
-        init(_ kind: ErrorType, _ index: Tokens.Index) {
-            self.type = kind
-            self.tokenIndex = index
-        }
 
-        let type: ErrorType
-        let tokenIndex: Tokens.Index
+    public struct TokenizerError: Error, CustomStringConvertible {
+        public let error: TokenizerErrorType
+        public let index: String.Index
+
+        public var description: String {
+            error.description
+        }
+    }
+
+    public enum TokenizerErrorType {
+        case invalidCharacter(character: Character)
+        case invalidDecimal(decimalString: String)
     }
 }
 
-extension ExpressionParser.ParserError {
-    enum ErrorType {
+extension ExpressionParser.TokenizerErrorType: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .invalidCharacter(character: let c):
+            return "Invalid character '\(c)'"
+        case.invalidDecimal(decimalString: let string):
+            return "'\(string)' is not a valid decimal number"
+        }
+    }
+}
+
+extension ExpressionParser {
+    public struct ParserError: Error, CustomStringConvertible {
+        init(_ error: ParserErrorType, _ index: Tokens.Index) {
+            self.error = error
+            self.tokenIndex = index
+        }
+
+        public let error: ParserErrorType
+        public let tokenIndex: Tokens.Index
+
+        public var description: String {
+            error.description
+        }
+    }
+
+    public enum ParserErrorType {
         case invalidNumber
         case beginOfParenthesisExpected
         case endOfParenthesisExpected
@@ -37,10 +82,10 @@ extension ExpressionParser.ParserError {
         case unexpectedToken(ExpressionParser.Token)
         case unexpectedEndOfExpression
     }
-}
 
-extension ExpressionParser.ParserError.ErrorType: CustomStringConvertible {
-    var description: String {
+}
+extension ExpressionParser.ParserErrorType: CustomStringConvertible {
+    public var description: String {
         switch self {
         case .beginOfParenthesisExpected:
             return "'(' expected."

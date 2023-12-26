@@ -7,9 +7,8 @@
 
 import Foundation
 
-extension ExpressionParser {
-    
-    public static func tokenize(_ expression: String) throws -> [Lexeme] {
+public extension ExpressionParser {
+    static func tokenize(_ expression: String) throws -> [Lexeme] {
         var decimalSeparators = CharacterSet(charactersIn: ",.'")
             .union(.whitespaces)
 
@@ -61,22 +60,23 @@ extension ExpressionParser {
                 let normalized = normalize(numericsString: numericsString)
                 if let value = Decimal(string: normalized, locale: standardLocale) {
                     lexemes.append(
-                        .init(token: .decimal(value), location: startingIndex)
+                        .init(token: .decimal(value), index: startingIndex)
                     )
                 } else {
-                    throw TokenizerError.invalidDecimal(decialString: numericsString,
-                                                    index: startingIndex)
+                    throw TokenizerError(error: .invalidDecimal(decimalString: numericsString), 
+                                         index: startingIndex)
                 }
             } else if let character = scanner.scanCharacter() {
                 switch character {
-                case "+": lexemes.append(.init(token: .plus, location: startingIndex))
-                case "-": lexemes.append(.init(token: .minus, location: startingIndex))
-                case "*": lexemes.append(.init(token: .multiply, location: startingIndex))
-                case "/": lexemes.append(.init(token: .divide, location: startingIndex))
-                case "(": lexemes.append(.init(token: .parensOpen, location: startingIndex))
-                case ")": lexemes.append(.init(token: .parensClose, location: startingIndex))
-                default: throw TokenizerError.invalidCharacter(character: character,
-                                                           index: startingIndex)
+                case "+": lexemes.append(.init(token: .plus, index: startingIndex))
+                case "-": lexemes.append(.init(token: .minus, index: startingIndex))
+                case "*": lexemes.append(.init(token: .multiply, index: startingIndex))
+                case "/": lexemes.append(.init(token: .divide, index: startingIndex))
+                case "(": lexemes.append(.init(token: .parensOpen, index: startingIndex))
+                case ")": lexemes.append(.init(token: .parensClose, index: startingIndex))
+                default:
+                    throw TokenizerError(error: .invalidCharacter(character: character), 
+                                         index: startingIndex)
                 }
             }
         }

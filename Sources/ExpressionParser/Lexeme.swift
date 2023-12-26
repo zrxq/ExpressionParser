@@ -9,8 +9,8 @@ import Foundation
 
 extension ExpressionParser {
     public struct Lexeme: Equatable {
-        let token: Token
-        let location: String.Index
+        public let token: Token
+        public let index: String.Index
     }
 
     public enum Token: Equatable {
@@ -24,6 +24,12 @@ extension ExpressionParser {
     }
 
     public typealias Tokens = [Token]
+}
+
+extension Array where Element == ExpressionParser.Lexeme {
+    public var tokens: [ExpressionParser.Token] {
+        map(\.token)
+    }
 }
 
 extension ExpressionParser.Token: CustomDebugStringConvertible {
