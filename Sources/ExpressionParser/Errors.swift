@@ -72,7 +72,7 @@ extension ExpressionParser {
         }
     }
 
-    public enum ParserErrorType {
+    public enum ParserErrorType: Equatable {
         case invalidNumber
         case beginOfParenthesisExpected
         case endOfParenthesisExpected
