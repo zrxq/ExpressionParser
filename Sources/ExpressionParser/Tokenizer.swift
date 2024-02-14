@@ -75,7 +75,7 @@ public extension ExpressionParser {
                 case "(": lexemes.append(.init(token: .parensOpen, index: startingIndex))
                 case ")": lexemes.append(.init(token: .parensClose, index: startingIndex))
                 default:
-                    throw TokenizerError(error: .invalidCharacter(character: character), 
+                    throw TokenizerError(error: .invalidCharacter(character), 
                                          index: startingIndex)
                 }
             }

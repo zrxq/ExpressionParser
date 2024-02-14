@@ -40,8 +40,8 @@ extension ExpressionParser {
         }
     }
 
-    public enum TokenizerErrorType {
-        case invalidCharacter(character: Character)
+    public enum TokenizerErrorType: Equatable {
+        case invalidCharacter(Character)
         case invalidDecimal(decimalString: String)
     }
 }
@@ -72,7 +72,7 @@ extension ExpressionParser {
         }
     }
 
-    public enum ParserErrorType {
+    public enum ParserErrorType: Equatable {
         case invalidNumber
         case beginOfParenthesisExpected
         case endOfParenthesisExpected

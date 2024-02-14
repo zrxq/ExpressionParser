@@ -7,7 +7,7 @@ final class TokenizerTests: XCTestCase {
         let input = "22.4"
         let actual = try ExpressionParser.tokenize(input)
         let expected: [ExpressionParser.Lexeme] = [
-            .init(token: .decimal(22.4), location: input.startIndex)
+            .init(token: .decimal(22.4), index: input.startIndex)
         ]
         XCTAssertEqual(actual, expected)
     }
@@ -33,7 +33,7 @@ final class TokenizerTests: XCTestCase {
         XCTAssertEqual(actualTokens, expectedTokens)
 
         let actualOffsets = lexemes.map {
-            input.distance(from: input.startIndex, to: $0.location)
+            input.distance(from: input.startIndex, to: $0.index)
         }
         let expectedOffsets = [0, 4, 6, 10, 12, 13, 16, 19, 20, 21, 22]
         XCTAssertEqual(actualOffsets, expectedOffsets)
@@ -66,12 +66,12 @@ final class TokenizerTests: XCTestCase {
     func testTokenizeInvalidCharacterError() throws {
         let input = "3 + a"
         XCTAssertThrowsError(try ExpressionParser.tokenize(input)) { error in
-            guard case let ExpressionParser.TokenizerError.invalidCharacter(character, index) 
-                    = error else {
-                return XCTFail("Expected LexerError.invalidCharacter")
+            guard let error = error as? ExpressionParser.TokenizerError else {
+                XCTFail("Unexpected error type: \(error)")
+                return
             }
-            XCTAssertEqual(character, "a")
-            XCTAssertEqual(index, input.index(input.startIndex, offsetBy: 4))
+            XCTAssertEqual(error.error, .invalidCharacter("a"))
+            XCTAssertEqual(error.index, input.index(input.startIndex, offsetBy: 4))
         }
     }
 }

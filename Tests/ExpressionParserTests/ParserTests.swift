@@ -12,8 +12,19 @@ final class ParserTests: XCTestCase {
 
     typealias Token = ExpressionParser.Token
     typealias ParserError = ExpressionParser.ParserError
-    typealias ErrorType = ExpressionParser.ParserError.ErrorType
+    typealias ErrorType = ExpressionParser.ParserErrorType
 
+    func testParseEmpty() {
+        let tokens: [Token] = []
+        XCTAssertThrowsError(try ExpressionParser.parse(tokens)) { error in
+            guard let error = error as? ParserError else {
+                XCTFail("Unexpected error type: \(error)")
+                return
+            }
+            XCTAssertEqual(error.error, .unexpectedEndOfExpression)
+        }
+    }
+    
     func testParseSimpleExpression() throws {
         let tokens: [Token] = [
             .decimal(3),

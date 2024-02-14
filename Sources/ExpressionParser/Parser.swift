@@ -72,7 +72,11 @@ extension ExpressionParser {
             case .minus, .plus:
                 return try parseUnary()
             case .none:
-                throw ParserError(.expressionAfterOperatorExpected, index)
+                if beforeOperator {
+                    throw ParserError(.unexpectedEndOfExpression, index)
+                } else {
+                    throw ParserError(.expressionAfterOperatorExpected, index)
+                }
             case .some(let token):
                 if beforeOperator {
                     throw ParserError(.unaryOperatorExpected(token), index)
