@@ -70,12 +70,7 @@ final class TokenizerTests: XCTestCase {
                 XCTFail("Unexpected error type: \(error)")
                 return
             }
-            guard case let ExpressionParser.TokenizerErrorType.invalidCharacter(c) = error.error
-            else {
-                XCTFail("Expected LexerError.invalidCharacter")
-                return
-            }
-            XCTAssertEqual(c, "a")
+            XCTAssertEqual(error.error, .invalidCharacter("a"))
             XCTAssertEqual(error.index, input.index(input.startIndex, offsetBy: 4))
         }
     }
