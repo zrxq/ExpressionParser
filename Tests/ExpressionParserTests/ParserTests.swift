@@ -62,4 +62,34 @@ final class ParserTests: XCTestCase {
         let result = try ExpressionParser.parse(tokens)
         XCTAssertEqual(result, -8)
     }
+
+    func testParseInvalidExpression() {
+        let tokens: [Token] = [
+            .decimal(3),
+            .plus
+        ]
+        XCTAssertThrowsError(try ExpressionParser.parse(tokens)) { error in
+            guard let error = error as? ParserError else {
+                XCTFail("Unexpected error type: \(error)")
+                return
+            }
+            XCTAssertEqual(error.error, .expressionAfterOperatorExpected)
+        }
+    }
+
+    // test unary operator precedence
+    func testParseUnaryOperatorsPrecedence() throws {
+        // -3 + -5 * 2
+        let tokens: [Token] = [
+            .minus,
+            .decimal(3),
+            .plus,
+            .minus,
+            .decimal(5),
+            .multiply,
+            .decimal(2)
+        ]
+        let result = try ExpressionParser.parse(tokens)
+        XCTAssertEqual(result, -13)
+    }
 }
